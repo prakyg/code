@@ -1,0 +1,25 @@
+package programs.designPatterns.CommandPattern;
+
+public class RemoteControl {
+	Button lightOn;
+	Button lightOff;
+	Button undo;
+
+	public RemoteControl() {
+		super();
+	}
+
+	public static void main(String[] args) {
+		RemoteControl remote = new RemoteControl();
+		Light l1 = new Light();
+		Command lightOnCommand = new LightOnCommand(l1);
+		Command lightOffCommand = new LightOffCommand(l1);
+		remote.lightOn = new RemoteButton(lightOnCommand);
+		remote.lightOff = new RemoteButton(lightOffCommand);
+		remote.undo = new UndoRemoteButton();
+
+		remote.lightOn.press();
+		remote.lightOff.press();
+		remote.undo.press();
+	}
+}

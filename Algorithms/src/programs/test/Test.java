@@ -1,0 +1,23 @@
+package programs.test;
+
+import java.util.HashMap;
+
+public class Test {
+	public Test() {
+		super();
+	}
+
+	public static void main(String[] args) {
+		// Test test = new Test();
+		float num = 365f;
+		final float den = 365f;
+		float probDiff = 1;
+		for (int i = 1; i <= 23; i++) {
+			probDiff *= (float) (num / den);
+			num--;
+		}
+		float p = 1.00000f - probDiff;
+		System.out.println(p);
+		HashMap ml;
+	}
+}

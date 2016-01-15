@@ -1,0 +1,30 @@
+package hackerEarth.dnb;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public abstract class Reader {
+	private static int playerId;
+
+	// Read input from stdin and provide input before running
+	public static int[][] readInput() throws IOException {
+		int[][] A = new int[5][5];
+		BufferedReader br = new BufferedReader(new FileReader("test.txt"));
+		String line = br.readLine();
+		for (int i = 0; i < 5; i++) { // arr.length =5
+			String[] arr = line.split(" ");
+			for (int j = 0; j < 5; j++) { // arr.length =5
+				A[i][j] = Integer.parseInt(arr[j]);
+			}
+			line = br.readLine();
+		}
+		playerId = Integer.parseInt(line.trim());
+		return A;
+	}
+
+	public static int getPlayerId() {
+		return playerId;
+	}
+}

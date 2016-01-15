@@ -1,0 +1,190 @@
+package hackerEarth.isola;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class NextMove {
+	int[][] board;
+	int[] moveX = { 1, 1, 1, 0, -1, -1, -1, 0 };
+	int[] moveY = { -1, 0, 1, 1, 1, 0, -1, -1 };
+
+	private int getMoveX(int move, int indexX) {
+		return indexX + moveX[move];
+	}
+
+	private int getMoveY(int move, int indexY) {
+		return indexY + moveY[move];
+	}
+
+	public NextMove() {
+		board = new int[7][7];
+		// initialize player1 's location
+		board[6][3] = 1;
+		System.out.println("Board initially");
+		printBoard(board);
+	}
+
+	public static void main(String[] args) throws IOException {
+		int[] a = new int[2];
+		NextMove game = new NextMove();
+
+		while (true) {
+			a = game.getInput();
+			game.processMove(a);
+		}
+	}
+
+	public int[] getInputSim() {
+		int a[] = { 5, 3 };
+		return a;
+	}
+
+	public int[] getInput() throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		// System.out.print("Enter String");
+		// String s = br.readLine();
+		int[] a = new int[2];
+		System.out.print("Enter Integer 1:");
+		try {
+			a[0] = Integer.parseInt(br.readLine());
+		} catch (NumberFormatException nfe) {
+			System.err.println("Invalid Format!");
+		}
+		System.out.print("Enter Integer 2:");
+		try {
+			a[1] = Integer.parseInt(br.readLine());
+		} catch (NumberFormatException nfe) {
+			System.err.println("Invalid Format!");
+		}
+		System.out.println("The following cell will be removed: " + a[0] + "," + a[1]);
+		return a;
+	}
+
+	public void calculateOptimalMoves() {
+		int[][] optimal = new int[7][7];
+		int[][] optimal2 = new int[7][7];
+
+		initialize(optimal);
+		optimal2 = thinkAndReturnMoreOptimal(optimal);
+		for (int i = 0; i < 5; i++) {
+			optimal2 = thinkAndReturnMoreOptimal(optimal2);
+		}
+
+		System.out.println("Evaluated the optiaml move board as:");
+		printOptimalMatrix(optimal2);
+		int[] pos = getPlayer1CurrentPosition();
+		int[] nextMove = getPlayerMove(pos, optimal2);
+		System.out.println("Algo dictates player moves to: " + nextMove[0] + "," + nextMove[1]);
+		System.out.println("Registering the move...");
+		// free up the current spot
+		board[pos[0]][pos[1]] = 0;
+		// occupy the next spot
+		board[nextMove[0]][nextMove[1]] = 1;
+		System.out.println("Board configuation after move:");
+		printBoard(board);
+	}
+
+	public void printBoard(int[][] a) {
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 7; j++) {
+				if (a[i][j] == 0)
+					System.out.print(a[i][j] + " ");
+				else if (a[i][j] == 1) {
+					// player
+					System.out.print("P ");
+				} else {
+					System.out.print("X ");
+				}
+			}
+			System.out.println();
+		}
+	}
+
+	public void printOptimalMatrix(int[][] a) {
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 7; j++) {
+				System.out.print(a[i][j] + " ");
+			}
+			System.out.println();
+		}
+	}
+
+	private int getOptimalSafely(int i, int j, int[][] optimal) {
+		if (i < 0 || i >= 7 || j < 0 || j >= 7)
+			return 0;
+		else
+			return optimal[i][j];
+	}
+
+	private void initialize(int[][] optimal) {
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 7; j++) {
+				if (board[i][j] == 0 || board[i][j] == 1) // valid move , using
+															// 1 because player
+															// can move back to
+															// it in future
+					optimal[i][j] = 1;
+				else
+					optimal[i][j] = 0;
+			}
+		}
+	}
+
+	private int[] getPlayer1CurrentPosition() {
+		int[] a = new int[2];
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 7; j++) {
+				if (board[i][j] == 1) {// valid move{
+					a[0] = i;
+					a[1] = j;
+					break;
+				}
+			}
+		}
+		return a;
+	}
+
+	private int[] getPlayerMove(int[] pos, int[][] optimal2) {
+		int iMax = 0, jMax = 0, valMax = 0, temp;
+		int i, j;
+		for (int move = 0; move < 8; move++) {
+			i = getMoveX(move, pos[0]);
+			j = getMoveY(move, pos[1]);
+			if (getOptimalSafely(i, j, board) == 0) {
+				temp = getOptimalSafely(i, j, optimal2);
+				if (temp > valMax) {
+					valMax = temp;
+					iMax = i;
+					jMax = j;
+				}
+			}
+		}
+		int newPos[] = new int[2];
+		newPos[0] = iMax;
+		newPos[1] = jMax;
+		return newPos;
+	}
+
+	private void processMove(int[] a) {
+		// remove the tile from the board
+		board[a[0]][a[1]] = -1;
+		System.out.println("Board after user has removed 1 tile:");
+		printBoard(board);
+		// Player 1 moves
+		calculateOptimalMoves();
+	}
+
+	private int[][] thinkAndReturnMoreOptimal(int[][] optimal) {
+		int[][] moreOptimal = new int[7][7];
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 7; j++) {
+				int sum = 0;
+				for (int move = 0; move < 8; move++)
+					sum += getOptimalSafely(getMoveX(move, i), getMoveY(move, j), optimal);
+				moreOptimal[i][j] = sum;
+			}
+		}
+		return moreOptimal;
+	}
+}

@@ -1,0 +1,83 @@
+package programs.ds.trie;
+
+import java.util.ArrayList;
+
+public class TrieNode {
+    //Integer field; 
+    char character;   //Tries are usually created for character strings
+    TrieNode[] children;
+    boolean isLeaf;
+    TrieNode parent;  //optional
+    boolean isWord;
+    int charSetCount;
+    public TrieNode(int charSetCount) {
+        this.charSetCount = charSetCount;
+        this.children = new TrieNode[this.charSetCount];
+        isLeaf =true;
+        isWord =false;
+    }
+    public TrieNode(int charSetCount, char ch) {
+        this.charSetCount = charSetCount;
+        this.children = new TrieNode[this.charSetCount];
+        this.character = ch;
+        isLeaf =true;
+        isWord =false;
+    }
+    public void addWord(char[] l,int arrIndex){
+            this.isLeaf=false;       //will happen charSetCount times , can we do better?
+            int childIndex = getCharIndex(l[arrIndex]);
+            if (children[childIndex] ==null){
+                children[childIndex] = new TrieNode(charSetCount,l[arrIndex]);
+                children[childIndex].parent = this;
+            }else{
+                //do nothing
+            }
+            if (arrIndex+1 <l.length){
+                children[childIndex].addWord(l, arrIndex+1);
+            }else{
+                children[childIndex].isWord=true;
+            }
+            
+    }
+    private int getCharIndex(char ch){
+        return ((int)(ch-'a'));
+    }
+    public void print(){    
+        for (int i=0; i<this.charSetCount;i++){
+            if(children[i] !=null){
+                System.out.print("for root: ");
+                //char temp = (char)((char)i+'a');
+                System.out.println(" Character:"+children[i].character);
+                children[i].printBelowRoot();
+            }
+        }
+        
+    }
+    private void printBelowRoot(){
+    
+        for (int i=0; i<this.charSetCount;i++){
+            if(children[i] !=null){
+                System.out.print("Parent:"+this.character);
+                //char temp = (char)((char)i+'a');
+                System.out.println(" Character:"+children[i].character);
+                children[i].printBelowRoot();
+            }
+        }
+        
+    }
+    public void print2(){    
+        System.out.print("parent: "+this.character);
+        for (int i=0; i<this.charSetCount;i++){
+            if(children[i] !=null){
+                System.out.print(" Character:"+children[i].character);
+             }
+        }
+        System.out.println();
+        for (int i=0; i<this.charSetCount;i++){
+            if(children[i] !=null){
+                 children[i].print2();
+             }
+        }
+        
+    }
+}

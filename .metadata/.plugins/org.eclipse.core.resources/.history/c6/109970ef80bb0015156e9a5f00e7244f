@@ -1,0 +1,15 @@
+package programs.designPatterns.CommandPattern;
+
+//This is the INVOKER class
+//Notice how it doesn't even know which command it is executing and how it is executing
+public class RemoteButton extends Button{
+    Command command;
+    public RemoteButton(Command command) {
+        this.command = command;
+    }
+    @Override
+    public void press(){
+        prevCommand = command;
+        command.execute();
+    }
+}

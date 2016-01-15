@@ -1,0 +1,86 @@
+package programs.graph;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+public class Graph {
+	// Graph will contain ArrayLists of vertices as well as edges
+	private ArrayList<Edge> graphEdges;
+	// Use arraylist's index to identify vertex
+	private ArrayList<Vertex> graphVertices;
+
+	public Graph() {
+		this.graphEdges = new ArrayList<Edge>();
+		this.graphVertices = new ArrayList<Vertex>();
+	}
+
+	// optimization
+	public Graph(int numEdges, int numVertices) {
+		this.graphEdges = new ArrayList<Edge>(numEdges);
+		this.graphVertices = new ArrayList<Vertex>(numVertices);
+	}
+
+	// should we return a flag?
+	public void addVertex(Vertex v) {
+		graphVertices.add(v);
+	}
+
+	// should we return a flag? edge can't exist without heads so no need?
+	public void addEdge(Edge e) {
+		graphEdges.add(e);
+		e.getTail().addEdge(e); // add the edge to the tail node
+	}
+
+	// support iterating over edges
+	public Iterator getEdgeIterator() {
+		return graphEdges.iterator();
+	}
+
+	// support iterating over vertices
+	public Iterator getVerticesIterator() {
+		return graphVertices.iterator();
+	}
+
+	public Vertex getVertex(int i) {
+		return graphVertices.get(i);
+	}
+
+	public void doDFS(Vertex source) {
+		Iterator i = source.getEdgesIterator();
+		Edge e;
+		while (i.hasNext()) {
+			e = (Edge) i.next();
+			e.getHead().setVisited(true);
+			doDFS(e.getHead());
+		}
+	}
+
+	public int getCountConnectedComponents() {
+		int count = 0;
+		for (Vertex v : graphVertices) {
+			if (v.isVisited() == false) {
+				doDFS(v);
+				count++;
+			}
+		} // end for loop
+		return count;
+	}
+
+	public int getIndexOf(Vertex v) {
+		return graphVertices.indexOf(v);
+	}
+
+	public void printGraph() {
+		int temp = -1;
+		for (Vertex v : graphVertices) {
+			System.out.print("Vertex " + this.getIndexOf(v) + ":");
+			Iterator i = v.getEdgesIterator();
+			while (i.hasNext()) {
+				temp = getIndexOf(((Edge) i.next()).getHead());
+				System.out.print(temp + " ");
+			}
+			System.out.println();
+		}
+
+	}
+}

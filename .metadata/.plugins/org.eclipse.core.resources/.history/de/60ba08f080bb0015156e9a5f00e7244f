@@ -1,0 +1,6 @@
+package programs.designPatterns.CommandPattern;
+
+public abstract class Button {
+    protected static Command prevCommand;
+    public abstract void press();
+}

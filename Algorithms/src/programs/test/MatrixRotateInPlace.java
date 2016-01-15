@@ -1,0 +1,63 @@
+package programs.test;
+
+public class MatrixRotateInPlace {
+	public MatrixRotateInPlace() {
+		super();
+	}
+
+	public static void main(String[] args) {
+		MatrixRotateInPlace m = new MatrixRotateInPlace();
+		int count = 0;
+		int[][] a = new int[][] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
+
+		m.printMatrix(a, 3);
+		m.rotateClockwise(a, 3);
+		m.printMatrix(a, 3);
+	}
+
+	public void printMatrix(int a[][], int n) {
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				System.out.print(a[i][j] + "  ");
+			}
+			System.out.println();
+		}
+	}
+
+	public void rotateClockwise(int a[][], int n) {
+		int temp;
+		if (n == 1)
+			return;
+		for (int i = 0; i < n / 2; i++) { // No. of rotations||No. of layers
+			int top = i;
+			int bottom = n - 1 - i;
+			int left = i;
+			int right = n - 1 - i;
+			for (int j = i; j < n - 1 - i; j++) { // j< n-i would be incorrect
+													// because you don't need to
+													// touch the last element of
+													// row
+													// as it would be the first
+													// element of other also
+
+				// pick up the last element (bottom-left) and store in temp
+				// Row should be fxn of j
+				// column should be fxn of layer
+				temp = a[n - 1 - j][left];
+
+				// copy the bottom right element to bottom left.
+				a[n - 1 - j][left] = a[bottom][n - 1 - j];
+
+				// copy the top right element to bottom right
+				a[bottom][n - 1 - j] = a[j][right];
+
+				// copy the top left element to top right
+				a[j][right] = a[top][j];
+
+				// copy temp to top left
+				a[top][j] = temp;
+				// printMatrix(a,3);
+			}
+		} // end of layer
+	}
+}
